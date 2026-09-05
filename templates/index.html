@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Meesho Auto Bot - JSK</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header with JSK Branding -->
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <h1>Meesho Bot</h1>
+                </div>
+                <div class="brand-badge">
+                    <span>by</span>
+                    <strong>JSK</strong>
+                </div>
+            </div>
+            <p class="subtitle">🚀 Fully Automatic Registration System</p>
+        </header>
+
+        <!-- Main Card -->
+        <div class="card main-card">
+            <div class="card-header">
+                <i class="fas fa-mobile-alt"></i>
+                <h2>Register Account</h2>
+                <span class="badge">FREE</span>
+            </div>
+            
+            <div class="card-body">
+                <!-- Step 1: Phone Input -->
+                <div class="step" id="step1">
+                    <div class="step-indicator">
+                        <div class="step-number">1</div>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step-content">
+                        <h3>Enter Phone Number</h3>
+                        <p class="step-desc">Enter a fresh 10-digit phone number to check for offers</p>
+                        
+                        <div class="input-group">
+                            <span class="input-prefix">+91</span>
+                            <input type="tel" id="phoneInput" placeholder="Enter 10-digit number" maxlength="10" inputmode="numeric" pattern="[0-9]*">
+                            <button id="checkBtn" class="btn btn-primary btn-block">
+                                <i class="fas fa-search"></i> Check
+                            </button>
+                        </div>
+                        
+                        <div id="checkResult" class="result-box"></div>
+                    </div>
+                </div>
+
+                <!-- Step 2: OTP Verification -->
+                <div class="step" id="step2" style="display:none;">
+                    <div class="step-indicator">
+                        <div class="step-number">2</div>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step-content">
+                        <h3>Verify OTP</h3>
+                        <p class="step-desc">Enter the OTP sent to your phone</p>
+                        
+                        <div class="otp-info">
+                            <i class="fas fa-info-circle"></i>
+                            <span id="otpPhoneDisplay">Sending OTP...</span>
+                        </div>
+                        
+                        <div class="input-group">
+                            <input type="text" id="otpInput" placeholder="Enter OTP" maxlength="6" inputmode="numeric" pattern="[0-9]*">
+                            <button id="verifyBtn" class="btn btn-success btn-block">
+                                <i class="fas fa-check"></i> Verify
+                            </button>
+                        </div>
+                        
+                        <div class="otp-actions">
+                            <button id="resendOtpBtn" class="btn btn-outline btn-sm">
+                                <i class="fas fa-redo"></i> Resend OTP
+                            </button>
+                            <span id="otpTimer" class="timer"></span>
+                        </div>
+                        
+                        <div id="verifyResult" class="result-box"></div>
+                    </div>
+                </div>
+
+                <!-- Progress -->
+                <div id="progressBar" style="display:none;">
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressFill"></div>
+                    </div>
+                    <p id="progressText" class="progress-text">Processing...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Session Display Card -->
+        <div class="card session-card" id="sessionCard" style="display:none;">
+            <div class="card-header success-header">
+                <i class="fas fa-check-circle"></i>
+                <h2>Registration Complete!</h2>
+                <button id="closeSessionBtn" class="btn btn-icon">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="session-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">📱 Phone</span>
+                        <span class="summary-value" id="sessionPhone">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">🎁 Offer</span>
+                        <span class="summary-value highlight" id="sessionOffer">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">🆔 User ID</span>
+                        <span class="summary-value" id="sessionUserId">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">🔑 Token</span>
+                        <span class="summary-value token-preview" id="sessionToken">-</span>
+                    </div>
+                </div>
+                
+                <div class="session-json">
+                    <div class="json-header">
+                        <span><i class="fas fa-code"></i> Session Data (JSON)</span>
+                        <button id="copySessionBtn" class="btn btn-outline btn-sm">
+                            <i class="fas fa-copy"></i> <span class="btn-text">Copy</span>
+                        </button>
+                    </div>
+                    <pre><code id="sessionJson" class="language-json"></code></pre>
+                </div>
+                
+                <div class="session-actions-bottom">
+                    <button id="newRegistrationBtn" class="btn btn-primary btn-block">
+                        <i class="fas fa-plus"></i> New Registration
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-grid">
+            <div class="feature-item">
+                <i class="fas fa-bolt"></i>
+                <span>Auto Hunt</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-gift"></i>
+                <span>₹180 Offer</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-mobile"></i>
+                <span>OTP Auto</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-sync"></i>
+                <span>Instant</span>
+            </div>
+        </div>
+
+        <!-- Footer with JSK Credit -->
+        <footer>
+            <div class="footer-content">
+                <p>Made with <i class="fas fa-heart" style="color: #ff4757;"></i> by <strong class="jsk-text">JSK</strong></p>
+                <p class="footer-sub">© 2026 Meesho Auto Bot | All Rights Reserved</p>
+                <div class="social-links">
+    <a href="https://t.me/+RzPa6JKMdj00YmY1" class="social-link" target="_blank" rel="noopener noreferrer">
+        <i class="fab fa-telegram"></i>
+    </a>
+</div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="/static/js/script.js"></script>
+</body>
+  </html>
