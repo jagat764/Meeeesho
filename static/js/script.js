@@ -26,6 +26,11 @@ class MeeshoBotUI {
         this.progressFill = document.getElementById('progressFill');
         this.progressText = document.getElementById('progressText');
         
+        // Offer Display Elements
+        this.offerDisplay = document.getElementById('offerDisplay');
+        this.displayOffer = document.getElementById('displayOffer');
+        this.displayPhone = document.getElementById('displayPhone');
+        
         // Session Display Elements
         this.sessionCard = document.getElementById('sessionCard');
         this.sessionPhone = document.getElementById('sessionPhone');
@@ -98,6 +103,25 @@ class MeeshoBotUI {
         observer.observe(this.step2, { attributes: true, attributeFilter: ['style'] });
     }
     
+    // ============ OFFER DISPLAY METHODS ============
+    
+    showOffer(phone, offer) {
+        this.displayOffer.textContent = `₹${offer} OFF`;
+        this.displayPhone.textContent = `+91 ${phone}`;
+        this.offerDisplay.style.display = 'block';
+        
+        // Haptic feedback
+        if (navigator.vibrate) {
+            navigator.vibrate(30);
+        }
+    }
+    
+    hideOffer() {
+        this.offerDisplay.style.display = 'none';
+    }
+    
+    // ============ PROGRESS METHODS ============
+    
     showProgress(show, text = 'Processing...', percentage = 0) {
         if (show) {
             this.progressBar.style.display = 'block';
@@ -150,6 +174,13 @@ class MeeshoBotUI {
         this.step2.style.display = 'none';
         this.progressBar.style.display = 'none';
         
+        // Keep offer visible but change styling to green (success)
+        this.offerDisplay.style.background = 'linear-gradient(135deg, #00b894 0%, #00a381 100%)';
+        this.offerDisplay.style.boxShadow = '0 4px 20px rgba(0, 184, 148, 0.3)';
+        
+        // Update offer label
+        this.offerDisplay.querySelector('.offer-label').textContent = '✅ Registration Complete!';
+        
         // Haptic feedback if available
         if (navigator.vibrate) {
             navigator.vibrate(50);
@@ -163,6 +194,7 @@ class MeeshoBotUI {
     
     closeSession() {
         this.sessionCard.style.display = 'none';
+        this.hideOffer();
         this.resetForNewRegistration();
     }
     
@@ -180,6 +212,12 @@ class MeeshoBotUI {
         this.phone = '';
         this.offer = 0;
         this.sessionData = null;
+        this.hideOffer();
+        
+        // Reset offer banner color and label
+        this.offerDisplay.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)';
+        this.offerDisplay.style.boxShadow = '0 4px 20px rgba(255, 107, 107, 0.3)';
+        this.offerDisplay.querySelector('.offer-label').textContent = '🎁 Offer Found!';
         
         // Focus on phone input
         setTimeout(() => this.phoneInput.focus(), 300);
@@ -258,6 +296,10 @@ class MeeshoBotUI {
             
             if (data.success) {
                 this.offer = data.offer;
+                
+                // Show the offer in the persistent banner
+                this.showOffer(phone, this.offer);
+                
                 this.showResult(this.checkResult, 'success', 
                     `✅ ${data.message}<br>🎁 ₹${this.offer} OFF offer found!`);
                 
